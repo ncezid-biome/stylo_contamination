@@ -8,8 +8,10 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { NANOQ  } from '../../../modules/nf-core/nanoq/main'
-include { RASUSA } from '../../../modules/nf-core/rasusa/main'
+include { NANOQ               } from '../../../modules/nf-core/nanoq/main'
+include { RASUSA              } from '../../../modules/nf-core/rasusa/main'
+
+include { CONTAMINATION_CHECK } from '../../../subworkflows/local/contamination_check/main'
 
 /*
 ========================================================================================
@@ -20,7 +22,7 @@ include { RASUSA } from '../../../modules/nf-core/rasusa/main'
 workflow READS_PREPROCESSING {
 
     take:
-    ch_samplesheet // includes genomes size mixed in
+    ch_samplesheet
 
     main:
 
@@ -31,16 +33,29 @@ workflow READS_PREPROCESSING {
     // MODULE: readfiltering ONT longreads
     //
     NANOQ (
-        ch_samplesheet.map { meta, reads, genus, species, genome_size -> tuple (meta, reads) },
+        ch_samplesheet,
         params.nanoq_format
     )
     ch_versions = ch_versions.mix(NANOQ.out.versions)
     ch_multiqc_files = ch_multiqc_files.mix(NANOQ.out.stats.map{ meta, stats -> tuple (stats) })
 
     //
+    // SUBWORKFLOW: check for contamination
+    //
+    CONTAMINATION_CHECK {
+        NANOQ.out.reads
+    }
+    ch_versions = ch_versions.mix(CONTAMINATION_CHECK.out.versions)
+    ch_multiqc_files = ch_multiqc_files.mix(CONTAMINATION_CHECK.out.multiqc_files)
+
+    ch_genome_size = CONTAMINATION_CHECK.out.pass.map { meta, genus -> [genus, meta] }
+        .combine(ch_lookup_table) // genus, meta, genome_size
+        .map { genus, meta, genome_size -> [meta, genome_size] }
+    // TODO maybe we can simplify the logic
+
+    //
     // MODULE: downsampling to specific coverage
     //
-    ch_genome_size = ch_samplesheet.map { meta, reads, genus, species, genome_size -> tuple (meta, genome_size) }
     ch_rasusa_in = NANOQ.out.reads.combine( ch_genome_size, by: 0 )
 
     RASUSA (
@@ -51,6 +66,7 @@ workflow READS_PREPROCESSING {
 
     emit:
     reads = RASUSA.out.reads
+    genome_size = ch_genome_size
     versions = ch_versions
     multiqc_files = ch_multiqc_files
 }

@@ -79,12 +79,8 @@ workflow PIPELINE_INITIALISATION {
     Channel
         .fromSamplesheet("input")
         .map {
-            meta, fastq, genus, species, genome_size -> 
-                if (!genome_size) {
-                    return [meta + [ single_end:true ], fastq, genus, species, "-" ]
-                } else {
-                    return [meta + [ single_end:true ], fastq, genus, species, genome_size ]
-                }
+            meta, fastq -> 
+                [meta + [ single_end:true ], fastq]
             }
         .set { ch_samplesheet }
 

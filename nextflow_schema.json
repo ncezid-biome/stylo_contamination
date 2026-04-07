@@ -303,6 +303,21 @@
             "type": "string",
             "default": "$baseDir/conf/lookup_table.tsv",
             "description": "overrides default lookup table with user provided custom lookup table",
+        },
+        "kraken_confidence": {
+            "type": "number",
+            "default": "0.5",
+            "description": "kraken '--confidence' parameter"
+        },
+        "contamination_threshold": {
+            "type": "number",
+            "default": "3",
+            "description": "contamination threshold, if 2 or more genera have a kraken percentage greater than this value, then the pipeline fails"
+        },
+        "cutoff_table": {
+            "type": "string",
+            "default": "$baseDir/assets/cutoff_table.tsv",
+            "description": "path to contamination cutoff_table.tsv, edit only if you need to"
         }
     }
 }

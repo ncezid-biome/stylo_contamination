@@ -19,23 +19,8 @@
                 "exists": true,
                 "pattern": "^\\S+\\.f(ast)?q(\\.gz)?$",
                 "errorMessage": "FastQ file for reads must be provided, cannot contain spaces and must have extension '.fq', '.fastq', '.fq.gz', or '.fastq.gz'"
-            },
-            "genus": {
-                "type": "string",
-                "pattern": "^\\S+$",
-                "errorMessage": "genus must be provided"
-            },
-            "species": {
-                "type": "string",
-                "pattern": "^\\S+$",
-                "errorMessage": "species must be provided or '-' if unknown"
-            },
-            "genome_size": {
-                "type": "string",
-                "pattern": "^(([0-9]*[.])?[0-9]+[gmk])|-$",
-                "errorMessage": "genome size must be '-' or in the format of a float followed by 'm' for megabase or 'k' for kilobase, for example '5.0m'"
             }
         },
-        "required": ["sample", "fastq", "genus", "species"]
+        "required": ["sample", "fastq"]
     }
 }

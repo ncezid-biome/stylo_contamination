@@ -1,0 +1,16 @@
+genus1	genus2	cutoff
+Salmonella	Escherichia	1.0
+Salmonella	Klebsiella	1.0
+Salmonella	Enterobacter	1.0
+Salmonella	Yersinia	0.5
+Salmonella	-	0.1
+Escherichia	Citrobacter	0.5
+Escherichia	Salmonella	0.1
+Escherichia	Klebsiella	0.1
+Escherichia	Enterobacter	0.1
+Escherichia	-	0.05
+Campylobacter	Lactobacillus	0.05
+Campylobacter	-	0.01
+Listeria	Bacillus	0.05
+Listeria	-	0.01
+Vibrio	-	0.01

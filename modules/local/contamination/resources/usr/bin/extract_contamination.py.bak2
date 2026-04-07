@@ -1,0 +1,64 @@
+#!/usr/bin/env python3
+
+import json
+import argparse
+import copy
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-s','--sample', required=True, help="sample id")
+parser.add_argument('-k','--kraken', required=True, help="kraken report")
+parser.add_argument('-o','--output', required=True, help="output file")
+parser.add_argument('-t','--table', required=True, help="cutoff table in the format: genus1\tgenus2\tcutoff, if genus2 is detected and genus1 is present, check if genus2 goes above the threshold")
+args = parser.parse_args()
+
+sample = args.sample
+rank = 0
+contaminated = False
+genera = set()
+genera.add('-')
+cutoff_dict = {}
+
+def check_table(genus,cov):
+    for g1 in sorted(list(genera))[::-1]:
+        if (g1,genus) in cutoff_dict:
+            if cov > cutoff_dict[(g1,genus)]:
+                genera.add(genus)
+            return
+            # if we find that genus < cutoff for pair then we dont need to go further down the table
+            # if we find out genus > cutoff then we add it and return
+    if ('-',genus) in cutoff_dict:
+        if cov > cutoff_dict[('-',genus)]:
+            genera.add(genus)
+        return
+    for g1 in sorted(list(genera))[::-1]:
+        if (g1,'-') in cutoff_dict and g1 != '-':
+            if cov > cutoff_dict[(g1,'-')]:
+                genera.add(genus)
+            return
+            # if we find that genus < cutoff for pair then we dont need to go further down the table
+            # if we find out genus > cutoff then we add it and return
+    if ('-','-') in cutoff_dict:
+        if cov > cutoff_dict[('-','-')]:
+            genera.add(genus)
+        return
+
+with open(args.table) as cutoffs:
+    for line in cutoffs.readlines()[1:]:
+        line = line[:-1].split('\t')
+        cutoff_dict[(line[0],line[1])] = float(line[2])
+
+with open(args.kraken, 'r') as kraken:
+    for line in kraken:
+        # line format: percent coverage, num read clade, num reads taxon, rank, NCBI ID, scientific name
+        # https://github.com/DerrickWood/kraken2/blob/master/docs/MANUAL.markdown#sample-report-output-format
+        line = line[:-1].split('\t')
+        if line[3] == 'G':
+            cov = float(line[0].strip(' '))
+            genus = line[5].strip(' ')
+            check_table(genus,cov)
+
+with open(args.output, 'w') as results:
+    genera.remove('-')
+    if len(genera) > 1:
+        contaminated = True
+    results.write(sample + '\t' + ','.join(list(genera)) + '\t' + str(contaminated) + '\n')
