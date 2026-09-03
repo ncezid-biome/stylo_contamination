@@ -1,10 +1,10 @@
-# ncezid-biome/stylo: Usage
+# ncezid-biome/stylo_contamination: Usage
 
 > _Documentation of pipeline parameters is generated automatically from the pipeline schema and can no longer be found in markdown files._
 
 ## Samplesheet input
 
-You will need to create a samplesheet with information about the samples you would like to analyze before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 4 columns, and a header row as shown in the examples below.
+You will need to create a samplesheet with information about the samples you would like to analyze before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 2 columns, and a header row as shown in the examples below.
 
 ```bash
 --input '[path to samplesheet file]'
@@ -12,35 +12,23 @@ You will need to create a samplesheet with information about the samples you wou
 
 ### Full samplesheet
 
-There is a strict requirement for the first 4 columns of the samplesheet to match those defined in the table below. The 5th column is optional.
+There is a strict requirement for the first 2 columns of the samplesheet to match those defined in the table below.
 
-A few example samplesheets are provided below and included in [assets](../assets/).
+An example is shown below and included in [assets](../assets/).
 
-```csv title="samplesheet_basic.csv"
-sample,fastq,genus,species
-sample1,/path/to/sample1.fastq.gz,Salmonella,enterica
-sample2,/path/to/sample2.fastq.gz,Campylobacter,coli
-sample3,/path/to/sample3.fastq.gz,Campylobacter,jejuni
-sample4,/path/to/sample4.fastq.gz,Vibrio,-
-sample5,/path/to/sample5.fastq.gz,Salmonella,enterica
+```csv title="samplesheet.csv"
+sample,fastq
+sample1,/path/to/sample1.fastq.gz
+sample2,/path/to/sample2.fastq.gz
+sample3,/path/to/sample3.fastq.gz
+sample4,/path/to/sample4.fastq.gz
+sample5,/path/to/sample5.fastq.gz
 ```
-
-```csv title="samplesheet_extra_genomes.csv"
-sample,fastq,genus,species,genome_size
-sample1,/path/to/sample1.fastq.gz,Salmonella,enterica,4.8m
-sample2,/path/to/sample2.fastq.gz,Campylobacter,coli,-
-sample3,/path/to/sample3.fastq.gz,Pseudomonas,aeruginosa,6.0m
-sample3,/path/to/sample3.fastq.gz,Bacteroides,fragilis,5.2m
-```
-
 
 | Column    | Format | Description                                                                                                                                                                            |
 | --------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `sample`  | string | Custom sample name. This entry must be unique. |
-| `fastq` | path | Full path to FastQ file for ONT longreads. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
-| `genus` | string | genus of the sample. This must be provided for the pipeline to run, otherwise the row will be skipped. |
-| `species` | string OR `-` | species of the sample. If you don't know the species or would like to skip this part use `-` as seen in the example samplesheet. Note that this might affect some assemblies such as Vibrio where different species within the genus have different genome sizes |
-| `genome_size` | float followed by valid unit prefix (i.e. `5.0m`, `425.0k`) OR `-` | genome size of the sample. If you would like to use a non-default genome_size, you can specify it here. You can find or define default organisms in the [lookup table](#editing-the-lookup-table). Additionally if you have a non-default organism you must specify a genome_size. |
+| `fastq` | path | Full path to FastQ file for ONT longreads. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz". |
 
 
 ## Running the pipeline
@@ -48,7 +36,7 @@ sample3,/path/to/sample3.fastq.gz,Bacteroides,fragilis,5.2m
 The typical command for running the pipeline is as follows:
 
 ```bash
-nextflow run ncezid-biome/stylo -r v1.4.0 --input /path/to/samplesheet.csv --outdir ./results -profile singularity
+nextflow run ncezid-biome/stylo_contamination -r v1.0.0 --input /path/to/samplesheet.csv --outdir ./results -profile singularity
 ```
 
 This will launch the pipeline with the `singularity` configuration profile. See below for more information about profiles.
@@ -75,7 +63,7 @@ Do not use `-c <file>` to specify parameters as this will result in errors. Cust
 The above pipeline run specified with a params file in yaml format:
 
 ```bash
-nextflow run /path/to/stylo/main.nf -profile singularity -params-file params.yaml
+nextflow run /path/to/stylo_contamination/main.nf -profile singularity -params-file params.yaml
 ```
 
 with `params.yaml` containing:
@@ -87,13 +75,6 @@ outdir: './results/'
 ```
 
 ## Advanced Usage
-
-### Editing the Lookup Table
-You can use the default [lookup table](../conf/lookup_table.tsv) provided with stylo, or you can create your own custom lookup table and use the `--lookup_table` flag. If a sample's genus is non-default (not found in the lookup table), then you must add a genome_size to the sample's row in the samplesheet. If a genus is missing, then you'll need to add a row to the lookup table prior to running the pipeline. In order to add a row to the lookup table you'll need the following information:
-
-1. genus (required)
-2. species (optional, use `-` if you want the lookup table to accept all species within that genus)
-3. genomes size (required, must follow the same format as the other rows in MBs)
 
 ### model parameter
 If the model parameter is left blank, the pipeline will choose the bacterial methylation model `r1041_e82_400bps_bacterial_methylation`.
@@ -117,7 +98,7 @@ dna_r10.4.1_e8.2_400bps_sup@v4.2.0
 for more details about model selection in dorado, see [dorado model documentation](https://software-docs.nanoporetech.com/dorado/latest/models/models/)
 
 > [!NOTE]
-> by default stylo downloads and looks for models to `$HOME/.dorado/models`. This can be changed using the parameter `--model_dir`.
+> by default stylo_contamination downloads and looks for models to `$HOME/.dorado/models`. This can be changed using the parameter `--model_dir`.
 
 ## Core Nextflow arguments
 

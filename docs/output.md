@@ -11,6 +11,7 @@ The directories listed below will be created in the results directory after the 
 The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes data using the following steps:
 
 - [nanoq](#nanoq) - Read filtering
+- [kalamari](#kalamari) - Contamination check and genus id
 - [Rasusa](#rasusa) - Read Downsampling
 - [Flye](#flye) - Assembly
 - [Dnaapler](#dnaapler) - Reorientation of contigs
@@ -30,6 +31,17 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 </details>
 
 Ultra-fast quality control and summary reports for nanopore reads. For further reading and documentation see [nanoq usage](https://github.com/esteinig/nanoq?tab=readme-ov-file#usage).
+
+### kalamari TODO
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `kalamari/`
+  - `*_filtered.fastq.gz`: filtered reads
+  - `*_filtered.stats`: basic stats summary for filtered reads
+
+</details>
 
 ### Rasusa
 

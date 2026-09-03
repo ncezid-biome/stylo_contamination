@@ -1,15 +1,19 @@
 ## Introduction
 
-**ncezid-biome/stylo** is a bioinformatics pipeline that can be used to filter, downsample, assemble, and QC [ONT](https://nanoporetech.com/) longreads. It takes a samplesheet and FASTQ files as input, performs read filtering, downsampling to specified coverage, assembly, and Quality Control (QC).
+**ncezid-biome/stylo_contamination** is a bioinformatics pipeline that can be used to filter, downsample, assemble, and QC [ONT](https://nanoporetech.com/) longreads. It takes a samplesheet and FASTQ files as input, performs read filtering, contamination checks, downsampling to specified coverage, assembly, and Quality Control (QC).
 
-![Diagram of stylo steps](assets/stylo_tubemap.png)
+> [!NOTE]
+> This is a experimental version of the [stylo](https://github.com/ncezid-biome/stylo) pipeline, intended for a specific use case. Please see stylo for the orginal maintained pipeline (in review)
+
+![Diagram of stylo_contamination steps](assets/stylo_contamination_tubemap.png)
 
 1. Filters low quality reads ([nanoq](https://github.com/esteinig/nanoq))
-2. Downsamples reads to specific coverage ([rasusa](https://github.com/mbhall88/rasusa))
-3. Assembles reads ([Flye](https://github.com/mikolmogorov/Flye))
-4. Reorients assembly ([Dnaapler](https://github.com/gbouras13/dnaapler))
-5. Error correction ([Dorado polish](https://github.com/nanoporetech/dorado))
-6. QCs assembly ([QUAST](https://github.com/ablab/quast))
+2. Checks for contamination and assigns a genus ([kalamari](https://github.com/lskatz/Kalamari))
+3. Downsamples reads to specific coverage ([rasusa](https://github.com/mbhall88/rasusa))
+4. Assembles reads ([Flye](https://github.com/mikolmogorov/Flye))
+5. Reorients assembly ([Dnaapler](https://github.com/gbouras13/dnaapler))
+6. Error correction ([Dorado polish](https://github.com/nanoporetech/dorado))
+7. QCs assembly ([QUAST](https://github.com/ablab/quast))
 
 ## Usage
 
@@ -25,32 +29,24 @@
 > 
 > singularity v3.8.7
 
-First, prepare a samplesheet with your input data that looks as follows:
+First, prepare a samplesheet with one fastq file (single-end) per row.
 
 `samplesheet.csv`:
 
 ```csv
-sample,fastq,genus,species,genome_size
-sample1,/path/to/sample1.fastq.gz,Salmonella,enterica,-
-sample2,/path/to/sample2.fastq.gz,Campylobacter,coli,-
-sample3,/path/to/sample3.fastq.gz,Campylobacter,jejuni,-
-sample4,/path/to/sample4.fastq.gz,Vibrio,-,-
-sample5,/path/to/sample5.fastq.gz,Pseudomonas,aeruginosa,6.0m
+sample,fastq
+sample1,/path/to/sample1.fastq.gz
+sample2,/path/to/sample2.fastq.gz
+sample3,/path/to/sample3.fastq.gz
+sample4,/path/to/sample4.fastq.gz
+sample5,/path/to/sample5.fastq.gz
 ```
-
-Each row represents a fastq file (single-end) with the known genus, species, and genome size.
-
-> [!NOTE]
-> You can use `-` where the species is unknown. If the organism is not in the [lookup table](conf/lookup_table.tsv), you must include a genome size. For more details see [full samplesheet description](docs/usage.md#full-samplesheet)
-
-If you'd like to create your own lookup table see [Advanced Usage](docs/usage.md#advanced-usage)
-
 
 Now, you can run the pipeline using:
 
 ```bash
-nextflow run ncezid-biome/stylo \
-   -r v1.4.0 \
+nextflow run ncezid-biome/stylo_contamination \
+   -r v1.0.0 \
    -profile singularity \
    --input samplesheet.csv \
    --outdir <OUTDIR>
@@ -65,24 +61,24 @@ nextflow run ncezid-biome/stylo \
 
 For more details about usage see the [Usage Page](docs/usage.md)
 
-## Testing stylo on your server
+## Testing stylo_contamination on your server
 
-If you'd like to test stylo on your server, you can run the following command
+If you'd like to test stylo_contamination on your server, you can run the following command
 
 ```bash
-nextflow run ncezid-biome/stylo \
-   -r v1.4.0 \
+nextflow run ncezid-biome/stylo_contamination \
+   -r v1.0.0 \
    -profile test,singularity \
-   --outdir stylo_test/
+   --outdir stylo_contamination_test/
 ```
 
 ## Credits
 
-ncezid-biome/stylo was originally written by Arzoo Patel, Mohit Thakur.
+ncezid-biome/stylo_contamination was originally written by Arzoo Patel, Mohit Thakur.
 
 We thank the following people for their extensive assistance in the development of this pipeline:
 
-Justin Kim, Jessica Chen, Peyton Smith, Lee S. Katz, Joe Wirth, Curtis Kapsak
+Justin Kim, Jessica Chen, Peyton Smith, Lee S. Katz, Joe Wirth, Curtis Kapsak, Taylor Griswold, Krittika Krishnan
 
 ## Contributions and Support
 
@@ -91,7 +87,7 @@ If you would like to contribute to this pipeline, please see the [contributing g
 ## Citations
 
 <!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi and badge at the top of this file. -->
-<!-- If you use ncezid-biome/stylo for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
+<!-- If you use ncezid-biome/stylo_contamination for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
 
 <!-- TODO nf-core: Add bibliography of tools and data used in your pipeline -->
 

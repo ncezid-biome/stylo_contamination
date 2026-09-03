@@ -83,9 +83,11 @@ with open(args.output, 'w') as results:
             results.write("# ERROR: 2 or more genera are above the contamination threshold\n")
         if index_hopping:
             print('INDEX')
+            print('_' + primary + '_')
             results.write("# WARNING: potential index hopping or low level contamination detected\n")
         if unsupported_genus:
             print('UNSUPPORTED')
+            print('_' + primary + '_')
             results.write("# WARNING: PRIMARY genus is unsupported, check kraken report for abnormal identifications\n")
         if not contaminated and not index_hopping and not unsupported_genus:
             print('PASS')

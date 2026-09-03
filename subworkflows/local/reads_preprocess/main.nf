@@ -48,8 +48,12 @@ workflow READS_PREPROCESSING {
     ch_versions = ch_versions.mix(CONTAMINATION_CHECK.out.versions)
     ch_multiqc_files = ch_multiqc_files.mix(CONTAMINATION_CHECK.out.multiqc_files)
 
+    ch_lookup_table = Channel.fromPath( params.lookup_table )
+        .splitCsv( sep: "\t" ) 
+        .map { row -> [ row[0], row[1] ] } // genus, genome_size
     ch_genome_size = CONTAMINATION_CHECK.out.pass.map { meta, genus -> [genus, meta] }
-        .combine(ch_lookup_table) // genus, meta, genome_size
+        .combine(ch_lookup_table, by: 0) // genus, meta, genome_size
+        .view()
         .map { genus, meta, genome_size -> [meta, genome_size] }
     // TODO maybe we can simplify the logic
 

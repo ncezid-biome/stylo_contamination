@@ -1,6 +1,0 @@
-sample,fastq,genus,species
-sample1,/path/to/sample1.fastq.gz,Salmonella,enterica
-sample2,/path/to/sample2.fastq.gz,Campylobacter,coli
-sample3,/path/to/sample3.fastq.gz,Campylobacter,jejuni
-sample4,/path/to/sample4.fastq.gz,Vibrio,-
-sample5,/path/to/sample5.fastq.gz,Salmonella,enterica

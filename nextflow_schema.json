@@ -293,6 +293,16 @@
             "default": "",
             "description": "dorado model used for polishing your assembly. If your input fastq header does not have a basecaller listed, this is the model that gets used by dorado polish. Otherwise dorado polish will choose the best model automatically. See README for full list of models",
         },
+        "ncbi_key": {
+            "type": "string",
+            "default": "",
+            "description": "ncbi key for kalamari kraken2 database creation",
+        },
+        "ncbi_email": {
+            "type": "string",
+            "default": "",
+            "description": "ncbi email for kalamari kraken2 database creation",
+        },
         "model_dir": {
             "type": "string",
             "default": "$HOME/.dorado/models",
@@ -308,6 +318,11 @@
             "type": "number",
             "default": "0.5",
             "description": "kraken '--confidence' parameter"
+        },
+        "kalamari_db": {
+            "type": "string",
+            "default": "$HOME/.kalamari_db/",
+            "description": "path to kalamari database"
         },
         "contamination_threshold": {
             "type": "number",
